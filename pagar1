@@ -1,0 +1,96 @@
+from collections import deque
+class Node:
+    def __init__(self, value, parent):
+        self.value = value
+        self.parent = parent
+        self.left = None
+        self.right = None
+
+    def insert(self, value):
+        if value < self.value:
+            if self.left is None:
+                self.left = Node(value, self)
+            else:
+                self.left.insert(value)
+        elif value > self.value:
+            if self.right is None:
+                self.right = Node(value, self)
+            else:
+                self.right.insert(value)
+        else:
+            return False
+
+
+class BinaryTree:
+    def __init__(self):
+        self.root = None
+        self.size = 0
+
+    def insert(self, value):
+        if self.root is None:
+            self.root = Node(value, None)
+        else:
+            self.root.insert(value)
+        self.size += 1
+
+    def inorder(self, node):
+        if node is not None:
+            self.inorder(node.left)
+            print(node.value, end=" ")
+            self.inorder(node.right)
+
+    def print(self):
+        self.inorder(self.root)
+        print()
+
+    def binarySearch(self, node, value):
+        if node is None or node.value == value:
+            return node
+        elif value < node.value:
+            return self.binarySearch(node.left, value)
+        else:
+            return self.binarySearch(node.right, value)
+
+    def search(self, value):
+        return self.binarySearch(self.root, value) is not None
+    def reverse(self):
+        def _reverse(node):
+            if node:
+                yield from _reverse(node.right)
+                yield node.value
+                yield from _reverse(node.left)
+
+        for value in _reverse(self.root):
+            print(value, end=" ")
+        print()
+        return
+    
+
+    def interval(self, a, b):
+        queue = deque()
+        queue.append((self.root, a, b))
+        visited = set()
+        vk = []
+        while queue:
+            node, lower_bound, upper_bound = queue.popleft()
+            visited.add(node)
+
+            if node.value <= b and node.value >= a:
+                vk.append(node.value)
+
+            if node.left and node.left not in visited:
+                queue.append((node.left, lower_bound, upper_bound))
+            if node.right and node.right not in visited:
+                queue.append((node.right, lower_bound, upper_bound))
+        vk = sorted(vk)
+        print(' '.join(str(i) for i in vk))
+    
+    
+tree = BinaryTree()
+tree.insert(20)
+tree.insert(5)
+tree.insert(12)
+tree.insert(30)
+tree.insert(24)
+tree.reverse()
+tree.interval(10, 25)     
